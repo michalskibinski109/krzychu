@@ -7,28 +7,7 @@ using namespace std;
 
 /*
 
-operatory
-							Common operators
-assignment | increment | arithmetic |  logical | comparison | member | other
-		   | decrement |            |		   |		    | access |
------------------------------------------------------------------------------                            
-  a = b    |    ++a    |     +a	    |	 !a	   |   a == b   |  a[b]  | a(...)
-  a += b   |	--a	   |     -a		|  a && b  |   a != b   |   *a   |  a, b
-  a -= b   |	a++	   |   a + b	|  a || b  |   a < b    |   &a   |  ? :
-  a *= b   |	a--	   |   a - b	|	       |   a > b    |  a->b  |
-  a /= b   |		   |   a * b	|	       |   a <= b	|  a.b   |
-  a %= b   |		   |   a / b	|		   |   a >= b	|  a->*b |
-  a &= b   |		   |   a % b	|		   |   a <=> b	|  a.*b  |
 
-
-zarzadzanie pamiecia
-  int size;
-
-  std::cin >> size;
-
-  int *array = new int[size];
-
-  delete [] array;
 polimorfizm - bedzie ciezko
 wyjatki
 
@@ -49,21 +28,6 @@ T minimum(const T& lhs, const T& rhs)
     return lhs < rhs ? lhs : rhs;
 }
 
-kontenery stl
-
-int main() {
-
-  // initialize a vector of int type
-  vector<int> numbers = {1, 100, 10, 70, 100};
-
-  // print the vector
-  cout << "Numbers are: ";
-  for(auto &num: numbers) {
-    cout << num << ", ";
-  }
-
-  return 0;
-}
 
 stringi stringstreamy
 
@@ -78,8 +42,10 @@ stringi stringstreamy
   std::cout << "bar: " << bar << '\n';
 */
 
+
+// 0 - KOLKO
+// 1 - KRZYZYK
 class Player{
-  int sign; //0 - kolko 1 - krzyzyk
   int win;
   int loses;
   int totalGames;
@@ -95,19 +61,21 @@ class Player{
 class Human: public Player
 {
 private:
-  /* data */
+  int symbol;
 public:
-  Human
-(/* args */);
+  Human(string n, int gamesInfo[3], int s):Player(n, gamesInfo){
+    symbol = s;
+  };
 
 };
 class Computer: public Player
 {
 private:
-  /* data */
+  int symbol;
 public:
-  Computer
-(/* args */);
+  Computer(string n, int gamesInfo[3], int s):Player(n, gamesInfo){
+    symbol = s;
+  };
 
 };
 
@@ -117,11 +85,11 @@ class Game {
   private:
   int board[9]; 
   vector<int> history; // lista wybranych pol w kolejnych turach
-  Player p1;
-  Player p2;
+  Human p1;
+  Computer p2;
   public:
   int result; //0 -  czarne; 1-remis; 2 - biale; -1 - nie ma wyniku
-  Game(Player human, Player computer): p1(human), p2(computer) {
+  Game(Human human, Computer computer): p1(human), p2(computer) {
     result = -1;
     history = {};
     for (int i = 0; i < 9; i++)board[i] = -1;
@@ -153,8 +121,8 @@ class Game {
 
 int main(){
     int a[3] = {1,2,3};
-    Player p1("human ",a);
-    Player p2("computer ",a);
+    Human p1("human ",a, 0);
+    Computer p2("computer ",a , 0);
     Game g(p1, p2);
     g.print();
     //p1.print();
