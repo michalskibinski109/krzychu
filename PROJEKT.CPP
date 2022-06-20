@@ -40,7 +40,6 @@ stringi stringstreamy
 class Player
 {
 private:
-
 public:
   int wins;
   int draws;
@@ -154,7 +153,8 @@ public:
     cout << "  " << symbols[6] << "  |  " << symbols[7] << "  |  " << symbols[8] << endl;
   }
 
-  void savePlayers(){
+  void savePlayers()
+  {
     ofstream outFile;
     outFile.open("players.txt");
     stringstream ss;
@@ -174,13 +174,13 @@ public:
     p1.name = name;
     p1.loses = a;
     p1.wins = b;
-    p1.totalGames= c;
+    p1.totalGames = c;
     inFile >> name >> a >> b >> c;
     p2.draws = c - b - a;
     p2.name = name;
     p2.loses = a;
     p2.wins = b;
-    p2.totalGames= c;
+    p2.totalGames = c;
   }
 
   int isGameOver()
@@ -217,24 +217,47 @@ public:
       cout << "typed invalid number" << endl;
       return false;
     }
-    return true;
-  }
-};
+    if (isGameOver() != -1)
+    {
+      switch (isGameOver())
+      {
+      case 0:
+      {
+        p1.wins++;
+        p2.loses++;
+      }
+      break;
+      case 1:
+      {
+        p2.wins++;
+        p1.loses++;
+      }
+      break;
+      case 2:
+      {
+        p1.draws++;
+        p2.draws++;
+      }
+      break;
+      }
+      return true;
+    }
+  };
 
-int main()
-{
-  int a[3] = {1, 2, 3};
-  Human p1("human ", a, 0);
-  Computer p2("computer ", a, 0);
-  Game g(p1, p2);
-  // p1.saveToFile();
-  //  int temp = 0;
-  //  while (g.isGameOver() == -1)
-  //  {
-  //    cout << "make move: ";
-  //    cin >> temp;
-  //    g.makeMove(temp);
-  //    g.print();
-  //  }
-  //  p1.printInfo();
-}
+  int main()
+  {
+    int a[3] = {1, 2, 3};
+    Human p1("human ", a, 0);
+    Computer p2("computer ", a, 0);
+    Game g(p1, p2);
+    // p1.saveToFile();
+    //  int temp = 0;
+    //  while (g.isGameOver() == -1)
+    //  {
+    //    cout << "make move: ";
+    //    cin >> temp;
+    //    g.makeMove(temp);
+    //    g.print();
+    //  }
+    //  p1.printInfo();
+  }
