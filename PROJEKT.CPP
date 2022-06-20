@@ -2,6 +2,9 @@
 #include <fstream>
 #include <vector>
 #include <sstream>
+#include <time.h>
+#include <map>
+#include <string>
 
 using namespace std;
 
@@ -36,12 +39,13 @@ stringi stringstreamy
 // 1 - KRZYZYK
 class Player
 {
+private:
+
+public:
   int wins;
   int draws;
   int loses;
   int totalGames;
-
-public:
   string name;
   Player(string n, int gamesInfo[3])
   {
@@ -88,18 +92,30 @@ public:
   {
     symbol = s;
   };
+
+  int computerMove(int board[])
+  {
+    int r = 0;
+    while (board[r] != -1)
+    {
+      srand(time(NULL));
+
+      int r = rand() % 9;
+    }
+    return r;
+  }
 };
 
 class Game
 {
 private:
+  int result;
   int *board;
   vector<int> history; // lista wybranych pol w kolejnych turach
   Human p1;
   Computer p2;
 
 public:
-  int result; // 0 -  czarne; 1-remis; 2 - biale; -1 - nie ma wyniku
   Game(Human human, Computer computer, int boardSize = 9) : p1(human), p2(computer)
   {
     result = -1;
@@ -108,7 +124,9 @@ public:
     for (int i = 0; i < 9; i++)
       board[i] = -1;
   }
- 
+
+  int getboard(); // uzycie akcesora
+
   void print()
   {
     system("cls");
@@ -134,6 +152,35 @@ public:
     cout << "  " << symbols[0] << "  |  " << symbols[1] << "  |  " << symbols[2] << endl;
     cout << "  " << symbols[3] << "  |  " << symbols[4] << "  |  " << symbols[5] << endl;
     cout << "  " << symbols[6] << "  |  " << symbols[7] << "  |  " << symbols[8] << endl;
+  }
+
+  void savePlayers(){
+    ofstream outFile;
+    outFile.open("players.txt");
+    stringstream ss;
+    ss << p1.name << p1.wins << " " << p1.loses << " " << p1.totalGames << endl;
+    ss << p2.name << p2.wins << " " << p2.loses << " " << p2.totalGames << endl;
+    outFile << ss.rdbuf();
+  }
+
+  void loadPlayers()
+  {
+    ifstream inFile;
+    inFile.open("players.txt");
+    string name;
+    int a, b, c;
+    inFile >> name >> a >> b >> c;
+    p1.draws = c - b - a;
+    p1.name = name;
+    p1.loses = a;
+    p1.wins = b;
+    p1.totalGames= c;
+    inFile >> name >> a >> b >> c;
+    p2.draws = c - b - a;
+    p2.name = name;
+    p2.loses = a;
+    p2.wins = b;
+    p2.totalGames= c;
   }
 
   int isGameOver()
@@ -180,14 +227,14 @@ int main()
   Human p1("human ", a, 0);
   Computer p2("computer ", a, 0);
   Game g(p1, p2);
-  g.print();
-  int temp = 0;
-  while(g.isGameOver() == -1)
-  {
-    cout<<"make move: ";
-    cin>>temp;
-    g.makeMove(temp);
-    g.print();
-  }
-  // p1.printInfo();
+  // p1.saveToFile();
+  //  int temp = 0;
+  //  while (g.isGameOver() == -1)
+  //  {
+  //    cout << "make move: ";
+  //    cin >> temp;
+  //    g.makeMove(temp);
+  //    g.print();
+  //  }
+  //  p1.printInfo();
 }
