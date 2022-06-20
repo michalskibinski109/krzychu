@@ -5,8 +5,8 @@
 
 using namespace std;
 
-
 /*
+
 operatory
 							Common operators
 assignment | increment | arithmetic |  logical | comparison | member | other
@@ -78,42 +78,84 @@ stringi stringstreamy
   std::cout << "bar: " << bar << '\n';
 */
 
-
-
-// Example in a game we have multiple entities so we put commom functionality and variables in base class Entity and Create Sub Classes Of the base class
 class Player{
-  private:
   int sign; //0 - kolko 1 - krzyzyk
   int win;
   int loses;
-  string name;
   int totalGames;
-  Player(string name, int gamesInfo[]){
-    name = name  
-    
+  public:
+  string name;
+  Player(string n, int gamesInfo[3]){
+    name = n;
+  }
+  string print(){
+    return name;
   }
 };
+class Human: public Player
+{
+private:
+  /* data */
+public:
+  Human
+(/* args */);
+
+};
+class Computer: public Player
+{
+private:
+  /* data */
+public:
+  Computer
+(/* args */);
+
+};
+
+
+
 class Game {
-protected:
-  int i;
-  Player player[2];
-public:
-  Game(int x) {
-     i = x;}
+  private:
+  int board[9]; 
+  vector<int> history; // lista wybranych pol w kolejnych turach
+  Player p1;
+  Player p2;
+  public:
+  int result; //0 -  czarne; 1-remis; 2 - biale; -1 - nie ma wyniku
+  Game(Player human, Player computer): p1(human), p2(computer) {
+    result = -1;
+    history = {};
+    for (int i = 0; i < 9; i++)board[i] = -1;
+    
+  }
+  void print(){
+    system("cls");
+    string symbols[9];
+    for (int i = 0; i < 9; i++)
+    {
+      switch (board[i])
+      {
+      case -1: //pole puste
+        symbols[i] = '-';break;
+      case 0: //kolko
+        symbols[i] = 'X';break;
+      case 1: //krzyzyk
+        symbols[i] = 'O';break;
+      }
+    }
+    
+    cout << "\n\n"<<p1.name<<" vs "<<p2.name<<"\n\n";
+    cout << endl;
+    cout << "  " << symbols[0] << "  |  " << symbols[1] << "  |  " << symbols[2] << endl;
+    cout << "  " << symbols[3] << "  |  " << symbols[4] << "  |  " << symbols[5] << endl;
+    cout << "  " << symbols[6] << "  |  " << symbols[7] << "  |  " << symbols[8] << endl;
+  }
 };
 
-
-class Board: public Game {
-  int j;
-public:
-  // derived uses x; y is passed along to base.
-  Board(int x, int y): Game(y)
-     { j = x; cout << "Constructing derived\n"; }
-
-  void show() { cout << i << " " << j << "\n"; }
-};
 int main(){
-    cout<<"";
-
-    return(0);
+    int a[3] = {1,2,3};
+    Player p1("human ",a);
+    Player p2("computer ",a);
+    Game g(p1, p2);
+    g.print();
+    //p1.print();
 }
