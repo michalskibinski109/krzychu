@@ -81,22 +81,37 @@ stringi stringstreamy
 
 
 // Example in a game we have multiple entities so we put commom functionality and variables in base class Entity and Create Sub Classes Of the base class
+class Player{
+  private:
+  int sign; //0 - kolko 1 - krzyzyk
+  int win;
+  int loses;
+  string name;
+  int totalGames;
+  Player(string name, int gamesInfo[]){
+    name = name  
+    
+  }
+};
 class Game {
-  //to bedzie klasa abstrakcyjna, nigdy nie stworzymy instancji tej klasy.
-    public:
-      Game(vector<string> players) { // Constructor with parameters
-      vector<string> players = players;
-    }
+protected:
+  int i;
+  Player player[2];
+public:
+  Game(int x) {
+     i = x;}
 };
 
-class Board:virtual Game// inhertiting From Entity class 
-{
-  public:
-    Board():Game(players){
 
- }
+class Board: public Game {
+  int j;
+public:
+  // derived uses x; y is passed along to base.
+  Board(int x, int y): Game(y)
+     { j = x; cout << "Constructing derived\n"; }
+
+  void show() { cout << i << " " << j << "\n"; }
 };
-
 int main(){
     cout<<"";
 
