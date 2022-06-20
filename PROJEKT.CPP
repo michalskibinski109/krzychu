@@ -9,8 +9,6 @@
 using namespace std;
 
 /*
-wykorzystanie akcesorów
-
 polimorfizm - bedzie ciezko
 
 szablony
@@ -20,19 +18,6 @@ T minimum(const T& lhs, const T& rhs)
 {
     return lhs < rhs ? lhs : rhs;
 }
-
-
-stringi stringstreamy
-
-  std::stringstream ss;
-
-  ss << 100 << ' ' << 200;
-
-  int foo,bar;
-  ss >> foo >> bar;
-
-  std::cout << "foo: " << foo << '\n';
-  std::cout << "bar: " << bar << '\n';
 */
 
 // 0 - KOLKO
@@ -57,7 +42,6 @@ public:
   }
   void printInfo()
   {
-    system("cls"); // czyszczenie okna konsoli
     cout << string(20, '-') << endl;
     cout << "player name: " << name << endl;
     cout << string(20, '=') << endl;
@@ -117,7 +101,6 @@ private:
 public:
   Game(Human human, Computer computer, int boardSize = 9) : p1(human), p2(computer)
   {
-    result = -1;
     history = {};
     board = new int[boardSize];
     for (int i = 0; i < 9; i++)
@@ -185,8 +168,7 @@ public:
 
   int isGameOver()
   {
-    // 1 -  czarne; 0-biale; 2 - remis; -1 - nie ma wyniku
-    result = -1;
+    // 1 -  krzyzyk; 0-kolko; 2 - remis; -1 - nie ma wyniku
     // checking the win for Simple Rows and Simple Column
     for (int i = 0; i < 3; i++)
     {
@@ -204,21 +186,29 @@ public:
     return -1;
   }
 
-  bool makeMove(int move)
+  void makeMove(int move)
   {
     int color = (history.size() % 2); // size zwraca dlugosc wektora
     try
     {
+      if(board[move] == -1)
+      {
       board[move] = color;
       history.push_back(move);
+      }
+      else{
+        cout<<"this square is occupated";
+      }
     }
     catch (const out_of_range &oor)
     {
       cout << "typed invalid number" << endl;
-      return false;
     }
-    if (isGameOver() != -1)
-    {
+      system("cls");
+      p1.printInfo();
+      p2.printInfo();
+      string temp;
+      cin >> temp;
       switch (isGameOver())
       {
       case 0:
@@ -239,25 +229,23 @@ public:
         p2.draws++;
       }
       break;
+      default:break;
       }
-      return true;
-    }
-  };
-
-  int main()
-  {
-    int a[3] = {1, 2, 3};
-    Human p1("human ", a, 0);
-    Computer p2("computer ", a, 0);
-    Game g(p1, p2);
-    // p1.saveToFile();
-    //  int temp = 0;
-    //  while (g.isGameOver() == -1)
-    //  {
-    //    cout << "make move: ";
-    //    cin >> temp;
-    //    g.makeMove(temp);
-    //    g.print();
-    //  }
-    //  p1.printInfo();
   }
+};
+
+int main()
+{
+  int a[3] = {0, 0, 0};
+  Human p1("human ", a, 0);
+  Computer p2("computer ", a, 0);
+  Game g(p1, p2);
+  int temp = 0;
+  while (g.isGameOver() == -1)
+  {
+    cout << "make move: ";
+    cin >> temp;
+    g.makeMove(temp);
+    g.print();
+  }
+}
