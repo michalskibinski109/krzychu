@@ -1,4 +1,4 @@
 human 
 3 1 2
-human 
+player 
 3 1 2

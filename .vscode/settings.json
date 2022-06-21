@@ -8,5 +8,6 @@
         "iosfwd": "cpp",
         "map": "cpp",
         "typeinfo": "cpp"
-    }
+    },
+    "C_Cpp.errorSquiggles": "Disabled"
 }

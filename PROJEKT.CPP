@@ -5,6 +5,7 @@
 #include <time.h>
 #include <map>
 #include <string>
+#include <unistd.h> 
 
 using namespace std;
 
@@ -82,9 +83,8 @@ public:
     while (board[r] != -1)
     {
       srand(time(NULL));
-
-      int r = rand() % 9;
-    }
+      r = rand() % 9;
+      }
     return r;
   }
 };
@@ -102,13 +102,14 @@ public:
   Game(Human human, Computer computer, int boardSize = 9) : p1(human), p2(computer)
   {
     history = {};
-    board = new int[boardSize];
+    board = new int[boardSize];// zarzadzanie pamiecia
     for (int i = 0; i < 9; i++)
       board[i] = -1;
   }
 
-  int getboard(); // uzycie akcesora
-
+  int *getboard(){
+    return board;
+  }
   void print()
   {
     system("cls");
@@ -128,6 +129,10 @@ public:
         break;
       }
     }
+    cout << endl;
+    cout << "  " << 0 << "  |  " << 1 << "  |  " << 2 << endl;
+    cout << "  " << 3 << "  |  " << 4 << "  |  " << 5 << endl;
+    cout << "  " << 6 << "  |  " << 7 << "  |  " << 8 << endl;
     cout << "\n\n"
          << p1.name << " vs " << p2.name << "\n\n";
     cout << endl;
@@ -186,66 +191,93 @@ public:
     return -1;
   }
 
-  void makeMove(int move)
+  bool makeMove(int move)
   {
     int color = (history.size() % 2); // size zwraca dlugosc wektora
+    int isMoveDone = false;
     try
     {
       if(board[move] == -1)
       {
       board[move] = color;
       history.push_back(move);
+       isMoveDone = true;
       }
       else{
-        cout<<"this square is occupated";
+        cout<<"invalid square\n";
+        return false;
       }
     }
     catch (const out_of_range &oor)
     {
       cout << "typed invalid number" << endl;
+      return false;
     }
+    if(isGameOver() != -1){
       system("cls");
-      p1.printInfo();
-      p2.printInfo();
-      string temp;
-      cin >> temp;
       switch (isGameOver())
       {
       case 0:
       {
+        cout<<"you won";
         p1.wins++;
         p2.loses++;
       }
       break;
       case 1:
       {
+        cout<<"you lost";
         p2.wins++;
         p1.loses++;
       }
       break;
       case 2:
       {
+        cout<<"";
         p1.draws++;
         p2.draws++;
       }
       break;
       default:break;
       }
+      p1.printInfo();
+      p2.printInfo();
+      string temp;
+      cout<<"type any letter to play again";
+      cin >> temp;
+      history.clear();
+      for (int i = 0; i < 9; i++)
+        board[i] = -1;
+        return false;
+  }
+  return true;
   }
 };
 
-int main()
-{
+void play(){
+  
   int a[3] = {0, 0, 0};
   Human p1("human ", a, 0);
   Computer p2("computer ", a, 0);
   Game g(p1, p2);
-  int temp = 0;
   while (g.isGameOver() == -1)
   {
+    int temp;
+    g.print();
+    cin >> temp;
+    while(g.makeMove(temp) != true){
+    g.print();
     cout << "make move: ";
     cin >> temp;
-    g.makeMove(temp);
+    }
+    g.print();
+    g.makeMove(p2.computerMove(g.getboard()));
+    sleep(1);
     g.print();
   }
+}
+
+int main()
+{
+  play();
 }
