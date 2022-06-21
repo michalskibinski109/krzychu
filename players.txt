@@ -1,2 +1,2 @@
-human 3 0 3
-player 0 3 3
+krzychu 3 0 3
+ala(komputer) 0 3 3
