@@ -1,4 +1,2 @@
-human 
-3 1 2
-player 
-3 1 2
+human 3 0 3
+player 0 3 3

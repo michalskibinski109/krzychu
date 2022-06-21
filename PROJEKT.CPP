@@ -32,16 +32,17 @@ public:
   int loses;
   int totalGames;
   string name;
-  Player(string n, int gamesInfo[3])
+  Player(string n, int gamesInfo[3]) // nigdy nie powstanie obiekt tej klasy w naszym programie
   {
+    //konstruktor jest wywolywany przy tworzeniu obiektu klasy
     // gamesInfo - wektor[3 x 1] : {wins, loses, totalgames}
-    name = n;
+    name = n; //atrybut obiektu klasy
     wins = gamesInfo[0];
     loses = gamesInfo[1];
     totalGames = gamesInfo[2];
-    draws = totalGames - wins - loses;
+    draws = totalGames - (wins + loses);
   }
-  void printInfo()
+  void printInfo() // wyswietlanie informacji
   {
     cout << string(20, '-') << endl;
     cout << "player name: " << name << endl;
@@ -54,30 +55,26 @@ public:
   }
 };
 
-class Human : public Player
+class Human : public Player //human dziedziczy po player
 {
-private:
-  int symbol;
 
 public:
-  Human(string n, int gamesInfo[3], int s) : Player(n, gamesInfo)
+  // konstruktor klasy ktora dziedziczy wywoluje konstruktor rodzica
+  Human(string n, int gamesInfo[3]) : Player(n, gamesInfo)
   {
-    symbol = s;
+    // nic tu sie nie dzieje
   };
 };
 
-class Computer : public Player
+class Computer : public Player // dziedziczy player
 {
-private:
-  int symbol;
-
 public:
-  Computer(string n, int gamesInfo[3], int s) : Player(n, gamesInfo)
+  Computer(string n, int gamesInfo[3]) : Player(n, gamesInfo)
   {
-    symbol = s;
+    //pusty konstruktor 
   };
 
-  int computerMove(int board[])
+  int findComputerMove(int board[])// funkcja zwraca ruch ktory komputer proponuje
   {
     int r = 0;
     while (board[r] != -1)
@@ -85,35 +82,40 @@ public:
       srand(time(NULL));
       r = rand() % 9;
       }
-    return r;
+    return r;// to jest ruch ktory komputer chce zagrac [nierownoznaczne z zagraniem go]
   }
 };
 
 class Game
 {
-private:
+private: // atrybuty prywatne sa dostepne tylko wewnatrz tej klasy
   int result;
-  int *board;
-  vector<int> history; // lista wybranych pol w kolejnych turach
+  int *board; //prywatne wiec tworzymy
+  vector<int> history; // uzycie kontenera STL jakim jest wektor
   Human p1;
   Computer p2;
 
 public:
+//do konstruktora podajemy gotowe juz obiekty computer i human
+//p1 bedzie przechopwywal odebrany obiekt human
+//p2 bedzie przechopwywal odebrany obiekt computer
   Game(Human human, Computer computer, int boardSize = 9) : p1(human), p2(computer)
   {
-    history = {};
-    board = new int[boardSize];// zarzadzanie pamiecia
+    history = {};//zapisujemy kolejne ruchy 
+    //jezeli ilosc ruchow jest parzysta to znaczy ze ruch krzyzyk
+    board = new int[boardSize];//dynamiczna alokacja pamieci zarzadzanie pamiecia
     for (int i = 0; i < 9; i++)
-      board[i] = -1;
+      board[i] = -1;// budujemy board[1 x 9] i wszedzize - 1czyli puste polaa
   }
 
-  int *getboard(){
-    return board;
+  int *getboard(){ 
+    //uzycie akcesora
+    return board; //nie mozna by poprostu tego zarzadac bo jest prywatne
   }
-  void print()
+  void print()//wyswietla board
   {
-    system("cls");
-    string symbols[9];
+    system("cls");//czysci konsole
+    string symbols[9];//symbols beda zawieraky konwersje liczb na symbole 1 - o i 0 - x
     for (int i = 0; i < 9; i++)
     {
       switch (board[i])
@@ -143,21 +145,25 @@ public:
 
   void savePlayers()
   {
+    //zapisuje graczy do pliku
     ofstream outFile;
     outFile.open("players.txt");
-    stringstream ss;
-    ss << p1.name << p1.wins << " " << p1.loses << " " << p1.totalGames << endl;
-    ss << p2.name << p2.wins << " " << p2.loses << " " << p2.totalGames << endl;
-    outFile << ss.rdbuf();
+    stringstream ss; // uzycie stringstreama
+    //stringstream dziala jak cout tylko zamiast wyswietlac to zapisuje
+
+    ss << p1.name << " " << p1.wins << " " << p1.loses << " " << p1.totalGames << endl;
+    ss << p2.name << " " << p2.wins << " " << p2.loses << " " << p2.totalGames << endl;
+    outFile << ss.rdbuf();// wrzucamy do pliku rdbuff - zwraca zawartosc ss gdyby nie bylo zapisali bysmy adres w pamieci naszego ss
   }
 
   void loadPlayers()
   {
+    //odczytuje graczy z pliku
     ifstream inFile;
     inFile.open("players.txt");
     string name;
     int a, b, c;
-    inFile >> name >> a >> b >> c;
+    inFile >> name >> a >> b >> c;//odczytujemy po spacji kolejne atrybuty
     p1.draws = c - b - a;
     p1.name = name;
     p1.loses = a;
@@ -173,51 +179,56 @@ public:
 
   int isGameOver()
   {
-    // 1 -  krzyzyk; 0-kolko; 2 - remis; -1 - nie ma wyniku
-    // checking the win for Simple Rows and Simple Column
-    for (int i = 0; i < 3; i++)
+    //sprawdza czy gra skonczona 
+
+    // zwraca 1 -  krzyzyk; 0-kolko; 2 - remis; -1 - nie ma wyniku
+    for (int i = 0; i < 3; i++)// sprawdzamy pion i poziom
     {
       if (board[i * 3] == board[i * 3 + 1] && board[i * 3 + 1] == board[i * 3 + 2])
         return board[i * 3];
       if (board[i] == board[3 + i] && board[i] == board[6 + i])
         return board[i];
     }
+    //sprawdzamy skos
     if (board[0] == board[8] && board[0] == board[4])
       return board[0];
     if (board[6] == board[4] && board[2] == board[4])
       return board[6];
-    if (history.size() == 9)
-      return 2;
-    return -1;
+    if (history.size() == 9)//jesli wszystie pola sa zapelnione
+      return 2;//zwroc remis
+    return -1;//jesli nic z powyzszych zwroc gra sie nie skonczyla
   }
 
   bool makeMove(int move)
   {
-    int color = (history.size() % 2); // size zwraca dlugosc wektora
-    int isMoveDone = false;
+    //zrob ruch
+    //symbol zawiera 0 jesli kolko na ruchu
+    //1 jesli krzyzyk
+    int symbol = (history.size() % 2); // size zwraca dlugosc wektora
     try
     {
       if(board[move] == -1)
       {
-      board[move] = color;
+      board[move] = symbol;
       history.push_back(move);
-       isMoveDone = true;
       }
       else{
         cout<<"invalid square\n";
         return false;
       }
     }
-    catch (const out_of_range &oor)
+    catch (const out_of_range &oor)//jesli wyszedles poza skale planszy zwroci wyjatek
     {
       cout << "typed invalid number" << endl;
       return false;
     }
-    if(isGameOver() != -1){
+    if(isGameOver() != -1){//jesli gra sie skonczyla
+      p1.totalGames++;//do playerow dodajemy statystyki
+      p2.totalGames++;
       system("cls");
       switch (isGameOver())
       {
-      case 0:
+      case 0://wygralo kolko
       {
         cout<<"you won";
         p1.wins++;
@@ -233,46 +244,64 @@ public:
       break;
       case 2:
       {
-        cout<<"";
+        cout<<"draw";
         p1.draws++;
         p2.draws++;
       }
       break;
-      default:break;
       }
-      p1.printInfo();
+      //tutaj jest zawarty interfejs po skonczonej grze
+      p1.printInfo();//wyswietlamy informacje o graczach to jest funkcja rodzica
       p2.printInfo();
       string temp;
-      cout<<"type any letter to play again";
+      cout<<"type s if you want save players status to file or any letter to play again\n";
       cin >> temp;
+      if (temp == "s"){
+        cout<<"saving . . . ";
+        sleep(.5);
+        savePlayers();//jesli gracz chce zapisac stastystyki do pliku to zapisuej
+        return true;
+      }
       history.clear();
       for (int i = 0; i < 9; i++)
         board[i] = -1;
         return false;
+      print();
+      //to do zwalnianie pamieci
   }
   return true;
   }
 };
 
 void play(){
-  
+  bool loadPlayersFromFile = false;
+  cout<<"do you want to load previous players? ['y'/'n'] \n";
+  string temp;
+  cin>>temp;
+  if (temp == "y")loadPlayersFromFile = true;//
   int a[3] = {0, 0, 0};
-  Human p1("human ", a, 0);
-  Computer p2("computer ", a, 0);
-  Game g(p1, p2);
-  while (g.isGameOver() == -1)
+  Human p1("human ", a); //tworzymy obiekt human
+  Computer p2("computer ", a); // tworzymy obiekt computer
+  Game g(p1, p2); // przekazujemyy je do konstruktora game
+  if(loadPlayersFromFile){
+    g.loadPlayers();//ta funkcja nadpisuje atrybuty stworzonych domyslnych graczy 
+  }
+  g.print();
+  while (g.isGameOver() == -1)//dopoki gra sie nie skonczy
   {
     int temp;
-    g.print();
+    cout << "\nmake move: ";
     cin >> temp;
-    while(g.makeMove(temp) != true){
-    g.print();
-    cout << "make move: ";
-    cin >> temp;
+    while(g.makeMove(temp) != true){//dopoki gracz nie wpisze poprawnego ruchu
+    cout << "\nmake move: ";
+    cin >> temp;//wpisuje od nowa
     }
     g.print();
-    g.makeMove(p2.computerMove(g.getboard()));
-    sleep(1);
+    //komputer proponuje ruch w funkcji p2.findComputerMove(g.getboard())
+    //a my zaproponowany ruch dajemy jako argument do funkcji makeMove
+    int move = p2.findComputerMove(g.getboard());
+    g.makeMove(move);
+    sleep(.4);
     g.print();
   }
 }
