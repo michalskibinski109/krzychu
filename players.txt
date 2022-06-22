@@ -1,0 +1,2 @@
+krzychu 3 0 3
+ala(komputer) 0 3 3

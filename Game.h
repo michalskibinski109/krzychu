@@ -8,73 +8,6 @@
 #include <unistd.h> 
 using namespace std;
 
-
-class Player
-{
-private:
-public:
-  int wins;
-  int draws;
-  int loses;
-  int totalGames;
-  string name;
-  Player(string n, int gamesInfo[3]) // nigdy nie powstanie obiekt tej klasy w naszym programie
-  {
-    //konstruktor jest wywolywany przy tworzeniu obiektu klasy
-    // gamesInfo - wektor[3 x 1] : {wins, loses, totalgames}
-    name = n; //atrybut obiektu klasy
-    wins = gamesInfo[0];
-    loses = gamesInfo[1];
-    totalGames = gamesInfo[2];
-    draws = totalGames - (wins + loses);
-  }
-  void printInfo() // wyswietlanie informacji
-  {
-    cout << string(20, '-') << endl;
-    cout << "player name: " << name << endl;
-    cout << string(20, '=') << endl;
-    cout << "totalGames: " << totalGames << endl;
-    cout << "wins: " << wins << endl;
-    cout << "loses: " << loses << endl;
-    cout << "draws: " << draws << endl;
-    cout << string(20, '-') << endl;
-  }
-};
-class Computer : public Player // dziedziczy player
-{
-public:
-  Computer(string n, int gamesInfo[3]) : Player(n, gamesInfo)
-  {
-    //pusty konstruktor 
-  };
-
-  int findComputerMove(int board[])// funkcja zwraca ruch ktory komputer proponuje
-  {
-    int r = 0;
-    while (board[r] != -1)
-    {
-      srand(time(NULL));
-      r = rand() % 9;
-      }
-    return r;// to jest ruch ktory komputer chce zagrac [nierownoznaczne z zagraniem go]
-  }
-};
-
-
-class Human : public Player //human dziedziczy po player
-{
-
-public:
-  // konstruktor klasy ktora dziedziczy wywoluje konstruktor rodzica
-  Human(string n, int gamesInfo[3]) : Player(n, gamesInfo)
-  {
-    // nic tu sie nie dzieje
-  };
-};
-
-
-
-
 class Game
 {
 private: // atrybuty prywatne sa dostepne tylko wewnatrz tej klasy
@@ -268,47 +201,68 @@ public:
   }
 };
 
-
-
-
-
-
-// 0 - KOLKO
-// 1 - KRZYZYK
-void play(){
-  bool loadPlayersFromFile = false;
-  cout<<"do you want to load previous players? ['y'/'n'] \n";
-  string temp;
-  cin>>temp;
-  if (temp == "y")loadPlayersFromFile = true;//
-  int a[3] = {0, 0, 0};
-  Human p1("human ", a); //tworzymy obiekt human
-  Computer p2("computer ", a); // tworzymy obiekt computer
-  Game g(p1, p2); // przekazujemyy je do konstruktora game
-  if(loadPlayersFromFile){
-    g.loadPlayers();//ta funkcja nadpisuje atrybuty stworzonych domyslnych graczy 
-  }
-  g.print();
-  while (g.isGameOver() == -1)//dopoki gra sie nie skonczy
-  {
-    int temp;
-    cout << "\nmake move: ";
-    cin >> temp;
-    while(g.makeMove(temp) != true){//dopoki gracz nie wpisze poprawnego ruchu
-    cout << "\nmake move: ";
-    cin >> temp;//wpisuje od nowa
-    }
-    g.print();
-    //komputer proponuje ruch w funkcji p2.findComputerMove(g.getboard())
-    //a my zaproponowany ruch dajemy jako argument do funkcji makeMove
-    int move = p2.findComputerMove(g.getboard());
-    g.makeMove(move);
-    sleep(.4);
-    g.print();
-  }
-}
-
-int main()
+class Computer : public Player // dziedziczy player
 {
-  play();
-}
+public:
+  Computer(string n, int gamesInfo[3]) : Player(n, gamesInfo)
+  {
+    //pusty konstruktor 
+  };
+
+  int findComputerMove(int board[])// funkcja zwraca ruch ktory komputer proponuje
+  {
+    int r = 0;
+    while (board[r] != -1)
+    {
+      srand(time(NULL));
+      r = rand() % 9;
+      }
+    return r;// to jest ruch ktory komputer chce zagrac [nierownoznaczne z zagraniem go]
+  }
+};
+
+
+class Player
+{
+private:
+public:
+  int wins;
+  int draws;
+  int loses;
+  int totalGames;
+  string name;
+  Player(string n, int gamesInfo[3]) // nigdy nie powstanie obiekt tej klasy w naszym programie
+  {
+    //konstruktor jest wywolywany przy tworzeniu obiektu klasy
+    // gamesInfo - wektor[3 x 1] : {wins, loses, totalgames}
+    name = n; //atrybut obiektu klasy
+    wins = gamesInfo[0];
+    loses = gamesInfo[1];
+    totalGames = gamesInfo[2];
+    draws = totalGames - (wins + loses);
+  }
+  void printInfo() // wyswietlanie informacji
+  {
+    cout << string(20, '-') << endl;
+    cout << "player name: " << name << endl;
+    cout << string(20, '=') << endl;
+    cout << "totalGames: " << totalGames << endl;
+    cout << "wins: " << wins << endl;
+    cout << "loses: " << loses << endl;
+    cout << "draws: " << draws << endl;
+    cout << string(20, '-') << endl;
+  }
+};
+
+class Human : public Player //human dziedziczy po player
+{
+
+public:
+  // konstruktor klasy ktora dziedziczy wywoluje konstruktor rodzica
+  Human(string n, int gamesInfo[3]) : Player(n, gamesInfo)
+  {
+    // nic tu sie nie dzieje
+  };
+};
+
+
